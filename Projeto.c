@@ -3,6 +3,7 @@
 #include <locale.h>
 #include <string.h>
 #include <stdbool.h>
+
 //Função limpa tela
 void cls(void){
     #ifdef WIN32
@@ -25,8 +26,50 @@ typedef struct item {
 	float presso;
 	char nome[23];
 };
-typedef struct item tItem;
+typedef struct item item;
+
+//struct do carrinho
+typedef struct car{
+    int preco[30];
+    char produto[30][23];
+    int precototal;
+};
+typedef struct car car;
+
+
 FILE *produtos;
+FILE *carrinho;
+
+void addcar(){
+    int id, n, resultado = 0;
+    car cart;
+    item produto;
+
+    //Usuário informa os dados
+    printf("Insira o id do produto: ");
+    scanf("%d", &id);
+    printf("Insira a quantidade do produto: ");
+    scanf("%d", &n);
+
+    //Abrindo os arquivos
+    carrinho = fopen("carrinho.dat", "a+b");
+    produtos = fopen("produtos.dat", "rb");
+
+        // Verifica se há conteúdo naquele trecho do disco
+        resultado = fread(&produto, id*sizeof(produto),1,produtos);
+        if(resultado==1){
+
+        }else{
+            printf("\tProduto nao existe\n");
+        }
+
+
+
+}
+
+void rmcar(){
+
+}
 
 //estrutura de carrinho de compras
 typedef struct Icarrinho {
@@ -45,14 +88,14 @@ void cadastrarItem(){
     char nome[23];
     float preco;
     //Usuário informa os dados
-    printf("Informe o nome do item: ");
+    printf("\tInforme o nome do item: ");
     scanf("%s", &nome);
     setbuf(stdin,0);
-    printf("Informe o preço o item: ");
+    printf("\tInforme o preço o item: ");
     scanf("%f", &preco);
 
     // Abrindo o arquivo
-    tItem produto;
+    item produto;
     produtos = fopen("produtos.dat", "a+b");
 
     // Método para cálculo automático de ID
@@ -89,9 +132,8 @@ void cadastrarItem(){
 }
 
 // Função mostra todos os produtos da loja
-void lista(){
-    // Abrindo arquivo
-    tItem produto;
+void lista(){    // Abrindo arquivo
+    item produto;
     produtos = fopen("produtos.dat", "r+b");
 
     //Verifica se é o fim do arquivo, enquanto for zero não é o fim
@@ -100,9 +142,9 @@ void lista(){
         fread(&produto, sizeof(produto),1,produtos);
         //Caso não tenha acabado, imprime o conteúdo
         if(feof(produtos)==0){
-            printf("ID.......: %d\n", produto.ID);
-            printf("Nome.....: %s\n", produto.nome);
-            printf("Preço....: %.2f\n", produto.presso);
+            printf("\tID.......: %d\n", produto.ID);
+            printf("\tNome.....: %s\n", produto.nome);
+            printf("\tPreco....: %.2f\n\n", produto.presso);
         }else{
         // No fim do arquivo, encerra-se o loop
         break;
@@ -111,16 +153,32 @@ void lista(){
 
 
 //função da loja
-void loja();
-
+void loja(){
+    int ans;
+    cls();
+    printf("\t=======LOJA========\n");
+    printf("\t1. Adicionar produto ao carrinho;\n\t2. Tirar produto do carrinho;     ");
+    scanf("%d", &ans);
+    switch(ans){
+        case 1:
+            addcar();
+            break;
+        case 2:
+            //rmcar();
+            break;
+        default:
+            printf("\tOpcao invalida\n\n");
+    }
+}
 //função de menu principal
 void menu(struct item *prod, struct Icarrinho *car){
+    setlocale(LC_ALL, " ");
 	//variavel de menu
 	int escolha, ans;
 do{
     cls();
 	printf("\t=====JAC JOIAS=====\n");
-	printf("\t1. Entrar na loja;\n\t2. \n\t3. Cadastrar item;\n\t4.  Carrinho de compras;\n\t5. Listar;\n\t6. Deletar item;\n\t7. Sair                ");
+	printf("\t1. Entrar na loja;\n\t2. Buscar Item\n\t3. Cadastrar item;\n\t4. Carrinho de compras;\n\t5. Listar;\n\t6. Deletar item;\n\t7. Sair                ");
 	scanf("%d", &escolha);
 	//fzd tudo sumir
 	cls();
@@ -128,7 +186,7 @@ do{
 	switch (escolha){
 		//entrar na loja
 		case 1:
-		/*loja(prod, car);*/
+		loja();
 		break;
 
 		//
@@ -159,40 +217,16 @@ do{
 		break;
 		escolha=NULL;
 }
-    printf("Deseja continuar? 1 para sim: ");
+    printf("\tDeseja continuar? 1 para sim: ");
     setbuf(stdin,0);
     scanf("%d", &ans);
 }while(ans==1);
 }
+
 //função do carrinho que irá incluir os produtos no vetor carrinho
 void precoAtual(/*struct Icarrinho *carrinho*/){
 
 }
-/*
-//função que cadastra produtos que serão incluidos no inventario e vendidos na loja
-void cadastrarItem(struct item *produtos){
-	//se cadastrar mais que a quantidade do inventario não será possivel cadastrar mais
-	if(nProduto == MAX_PROD){
-		printf("Esta lotado.\n");
-		return;
-	}
-	//cadastrando o ID do item
-	printf("Inclua o numero de cadastro do item:\n" );
-	scanf("%d", &produtos[nProduto].ID);
-	//nome do produto, colocar o tipo de item no inicil
-	//ia criar uma variavel para tipo mas fiquei com preguiça :3
-	printf("Inclua o nome do item:\n" );
-	scanf("%22[^\n]", produtos[nProduto].nome);
-	//limpando o buffer de levis
-	setbuf(stdin, NULL);
-	//colocando o \0 no final para não dar merda
-	produtos[nProduto].nome[22] = '\0';
-	//preço do produto
-	printf("Inclua o preco do item:\n" );
-	scanf("%f", &produtos[nProduto].presso);
-
-	nProduto++;
-}*/
 
 int main()
 {
