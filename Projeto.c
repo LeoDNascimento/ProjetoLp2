@@ -102,9 +102,32 @@ void fCarrinho(){
 //protoripo da função que irá mostrar ao cliente quanto ele já tem no carrinho
 void precoAtual(/*struct item **/);
 
+void busca(){
+    int id, check;
+
+    // Usuário informa o ID
+    printf("\tInforme o ID do produto: ");
+    scanf("%d", &id);
+
+    // Inicializando arquivo
+    item produto;
+    produtos = fopen("produtos.dat", "rb");
+
+    //Processo de impressão dos dados sobre o produto desejado
+    check = fread(&produto, id*sizeof(produto),1,produtos);
+    if(check==1){
+        printf("\tO nome do produto é: %s\n", produto.nome);
+        printf("\tO produto custa R$%.2f\n", produto.presso);
+    }else{
+        printf("\tNão existe produto com tal ID\n");
+    }
+    fclose(produtos);
+    return;
+}
+
 //função que irá cadastrar itens para a loja
 void cadastrarItem(){
-    int id,rec,resultado=0,cont=1, i=1;
+    int id,rec,resultado=0,cont=1, i=0;
     char nome[23];
     float preco;
     //Usuário informa os dados
@@ -135,9 +158,9 @@ void cadastrarItem(){
 
     do{
     // Verifica se há conteúdo naquele trecho do disco
-    resultado = fread(&produto, (i-1)*sizeof(produto),1,produtos);
+    resultado = fread(&produto, i*sizeof(produto),1,produtos);
     // Se não houver, insere o conteúdo passado pelo usuario
-    if (resultado != 1){
+    if (resultado != 1 || produto.ID == 0){
     fseek(produtos, 0, SEEK_SET);
     strcpy(produto.nome, &nome);
     produto.ID = cont;
@@ -154,7 +177,6 @@ void cadastrarItem(){
 //Função apaga itens
 void deletarItem(){
     int i,id, resultado;
-    char null = '\0';
     cls();
     printf("\tInforme o ID do produto: ");
     scanf("%d", &id);
@@ -174,8 +196,6 @@ void deletarItem(){
     }else{
         printf("\tProduto nao existe\n");
     }
-
-
     return;
 }
 
@@ -239,7 +259,7 @@ do{
 
         //
         case 2:
-
+        busca();
         break;
 
         //Cadastrar item
@@ -250,7 +270,6 @@ do{
         //carrinho de compras
         case 4:
         fCarrinho();
-        break;
         break;
 
         case 5:
