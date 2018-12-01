@@ -13,6 +13,8 @@ void cls(void){
     #endif // WIN32
 }
 
+
+
 //quantidade de produtos maxima na loja
 #define MAX_PROD 30
 //quantidade de produtos no Carrinho
