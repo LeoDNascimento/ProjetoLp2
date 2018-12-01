@@ -24,9 +24,15 @@ int nProduto=0;
 
 //struct principal
 typedef struct item {
+<<<<<<< HEAD
+    int ID;
+    float presso;
+    char nome[23];
+=======
 	int ID;
 	float presso;
 	char nome[23];
+>>>>>>> de528a1581ce6721746f95d30cee28cc49c7ba02
 };
 typedef struct item item;
 
@@ -48,6 +54,15 @@ void addcar(){
     item produto;
 
     //Usuário informa os dados
+<<<<<<< HEAD
+    printf("\tInsira o id do produto: ");
+    scanf("%d", &id);
+    printf("\tInsira a quantidade do produto: ");
+    scanf("%d", &n);
+
+    //Abrindo os arquivos
+    carrinho = fopen("carrinho.dat", "wb");
+=======
     printf("Insira o id do produto: ");
     scanf("%d", &id);
     printf("Insira a quantidade do produto: ");
@@ -55,15 +70,31 @@ void addcar(){
 
     //Abrindo os arquivos
     carrinho = fopen("carrinho.dat", "a+b");
+>>>>>>> de528a1581ce6721746f95d30cee28cc49c7ba02
     produtos = fopen("produtos.dat", "rb");
 
         // Verifica se há conteúdo naquele trecho do disco
         resultado = fread(&produto, id*sizeof(produto),1,produtos);
         if(resultado==1){
+<<<<<<< HEAD
+        fseek(produtos,id*sizeof(produto),SEEK_SET);
+        fseek(carrinho,0,SEEK_SET);
+        cart.preco[id-1] = produto.presso;
+        strcpy(cart.produto[id-1], &produto.nome);
+        printf("\n\n%s", cart.produto[id-1]);
+        cart.precototal = 0;
+        cart.precototal = cart.precototal + n*produto.presso;
+        fwrite(&cart, sizeof(cart),1,carrinho);
+        }else{
+            printf("\tProduto nao existe\n");
+        }
+    fclose(carrinho);
+=======
 
         }else{
             printf("\tProduto nao existe\n");
         }
+>>>>>>> de528a1581ce6721746f95d30cee28cc49c7ba02
 
 
 
@@ -74,11 +105,31 @@ void rmcar(){
 }
 
 //estrutura de carrinho de compras
+<<<<<<< HEAD
+void fCarrinho(){
+        int i;
+
+        car cart;
+
+        produtos = fopen("produtos.dat", "r+b");
+        carrinho = fopen("carrinho.dat", "rb");
+
+        fread(&cart, sizeof(cart),1,carrinho);
+        //Caso não tenha acabado, imprime o conteúdo
+        if(feof(carrinho)==0){
+            printf("\tPreco.......: %d\n", cart.preco[2]);
+            printf("\tNome.....: %s\n", cart.produto[2]);
+            printf("\tPreco Total....: %.2d\n\n", cart.precototal);
+        }else{
+            printf("\tCarrinho vazio\n");
+        }
+=======
 typedef struct Icarrinho {
 	//objeto do tipo item que esta nessa struct carrinho
 	struct item pr;
 	//quantidade de itens daqueles produto dentro do carrinho
 	int quantidade;
+>>>>>>> de528a1581ce6721746f95d30cee28cc49c7ba02
 };
 
 //protoripo da função que irá mostrar ao cliente quanto ele já tem no carrinho
@@ -133,6 +184,37 @@ void cadastrarItem(){
     }while(resultado==1); // Loop dura enquanto houver conteúdo no arquivo
 }
 
+<<<<<<< HEAD
+//Função apaga itens
+void deletarItem(){
+    int i,id, resultado;
+    char null = '\0';
+    cls();
+    printf("\tInforme o ID do produto: ");
+    scanf("%d", &id);
+
+    item produto;
+    produtos = fopen("produtos.dat", "a+b");
+
+    resultado = fread(&produto, id*sizeof(produto),1,produtos);
+    if(resultado==1)
+    {
+        fseek(produtos, id*sizeof(produto), SEEK_SET);
+        strcpy(produto.nome, "\0");
+        produto.ID = 0;
+        produto.presso = 0;
+        fwrite(&produto,sizeof(produto),1,produtos);
+        fclose(produtos);
+    }else{
+        printf("\tProduto nao existe\n");
+    }
+
+
+    return;
+}
+
+=======
+>>>>>>> de528a1581ce6721746f95d30cee28cc49c7ba02
 // Função mostra todos os produtos da loja
 void lista(){    // Abrindo arquivo
     item produto;
@@ -143,7 +225,11 @@ void lista(){    // Abrindo arquivo
         // lê o arquivo para ver se o conteúdo já acabou
         fread(&produto, sizeof(produto),1,produtos);
         //Caso não tenha acabado, imprime o conteúdo
+<<<<<<< HEAD
+        if(feof(produtos)==0 && produto.ID!=0){
+=======
         if(feof(produtos)==0){
+>>>>>>> de528a1581ce6721746f95d30cee28cc49c7ba02
             printf("\tID.......: %d\n", produto.ID);
             printf("\tNome.....: %s\n", produto.nome);
             printf("\tPreco....: %.2f\n\n", produto.presso);
@@ -175,6 +261,53 @@ void loja(){
 //função de menu principal
 void menu(struct item *prod, struct Icarrinho *car){
     setlocale(LC_ALL, " ");
+<<<<<<< HEAD
+    //variavel de menu
+    int escolha, ans;
+do{
+    cls();
+    printf("\t=====JAC JOIAS=====\n");
+    printf("\t1. Entrar na loja;\n\t2. Buscar Item\n\t3. Cadastrar item;\n\t4. Carrinho de compras;\n\t5. Listar;\n\t6. Deletar item;\n\t7. Sair                ");
+    scanf("%d", &escolha);
+    //fzd tudo sumir
+    cls();
+
+    switch (escolha){
+        //entrar na loja
+        case 1:
+        loja();
+        break;
+
+        //
+        case 2:
+
+        break;
+
+        //Cadastrar item
+        case 3:
+        cadastrarItem(prod);
+        break;
+
+        //carrinho de compras
+        case 4:
+        fCarrinho();
+        break;
+        break;
+
+        case 5:
+        lista();
+        break;
+
+        case 6:
+        deletarItem();
+        break;
+
+        default:
+        printf("\t-----Muito obrigado volte sempre-----\n");
+        return 0;
+        break;
+        escolha=NULL;
+=======
 	//variavel de menu
 	int escolha, ans;
 do{
@@ -218,6 +351,7 @@ do{
 		return 0;
 		break;
 		escolha=NULL;
+>>>>>>> de528a1581ce6721746f95d30cee28cc49c7ba02
 }
     printf("\tDeseja continuar? 1 para sim: ");
     setbuf(stdin,0);
@@ -234,10 +368,19 @@ int main()
 {
     //Português no windows né
     setlocale(LC_ALL," ");
+<<<<<<< HEAD
+    //vetor dos produtos da loja
+    struct item produtos[MAX_PROD];
+    //vetor do carrinho do cliente
+//    struct Icarrinho carrinho [MAX_PROD];
+    menu(produtos, carrinho);
+    return 0;
+=======
 	//vetor dos produtos da loja
 	struct item produtos[MAX_PROD];
 	//vetor do carrinho do cliente
 	struct Icarrinho carrinho [MAX_PROD];
 	menu(produtos, carrinho);
 	return 0;
+>>>>>>> de528a1581ce6721746f95d30cee28cc49c7ba02
 }
