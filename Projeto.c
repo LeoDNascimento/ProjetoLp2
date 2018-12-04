@@ -61,6 +61,7 @@ do{
 	if(utility<nItens){
 			carroAtual[produtosNoCarrinho].prodNoCarrinho.ID=lista[utility].ID;
 			//carroAtual[produtosNoCarrinho].prodNoCarrinho.nome=lista[utility].nome;
+			strcpy(lista[utility].nome, carroAtual[produtosNoCarrinho].prodNoCarrinho.nome);
 			carroAtual[produtosNoCarrinho].prodNoCarrinho.presso=lista[utility].presso;
 			carroAtual[produtosNoCarrinho].quantidade=quantidade;
 		}
@@ -72,7 +73,7 @@ while(utility>0);
 return;}
 
 //cria o arquivo que será a nota fiscal
-void notaf(struct carrinho *carroAtual);
+//void notaf(struct carrinho *carroAtual);
 //busca itens cadastrados
 //done
 void busca(){
@@ -105,7 +106,7 @@ void cadastrarItem(){
     float preco;
     //Usuário informa os dados
     printf("\tInforme o nome do item: ");
-    scanf("%s", &nome);
+		scanf("%50[^\n]", &nome);
     setbuf(stdin,0);
     printf("\tInforme o preço o item: ");
     scanf("%f", &preco);
@@ -234,7 +235,7 @@ do{
 
         //cria um arquivo que será a nota fiscal
         case 4:
-				notaf(carAtual);
+			//	notaf(carAtual);
         break;
 
 				//mostra quais itens já tem cadastrados
@@ -249,7 +250,7 @@ do{
 
         default:
         printf("\t-----Muito obrigado volte sempre-----\n");
-        return 0;
+        return;
         break;
         escolha=NULL;
 }
@@ -270,4 +271,4 @@ int main(){
 		struct carrinho carAtual[50];
     menu(produtos, carAtual);
     return 0;
-}}
+}
