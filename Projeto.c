@@ -29,6 +29,7 @@ typedef struct carrinho{
 	struct item prodNoCarrinho;
 };
 
+FILE *produtotxt;
 FILE *produtos;
 FILE *notaFiscal;
 
@@ -69,6 +70,7 @@ do{
 	}
 while(utility>0);
 
+fclose(produtos);
 
 return;
 }
@@ -131,6 +133,7 @@ void cadastrarItem(){
     // Abrindo o arquivo
     item produto;
     produtos = fopen("produtos.dat", "a+b");
+    produtotxt = fopen("produtos.txt", "a+");
 
     // Método para cálculo automático de ID
     for(i=0;i<MAX_PROD;i++){
@@ -158,11 +161,27 @@ void cadastrarItem(){
     produto.presso = preco;
     fwrite(&produto, sizeof(produto),1,produtos);
     fclose(produtos);
-    return;
+    break;
     }
     // Incrementa variável para caso retorne o loop
     i++;
     }while(resultado==1); // Loop dura enquanto houver conteúdo no arquivo
+
+        do{
+    // Verifica se há conteúdo naquele trecho do disco
+    resultado = fread(&produto, i*sizeof(produto),1,produtotxt);
+    // Se não houver, insere o conteúdo passado pelo usuario
+    if (resultado != 1 || produto.ID == 0){
+    fseek(produtotxt, 0, SEEK_SET);
+    fprintf(produtotxt, "%d\n", cont);
+    fprintf(produtotxt, "%s\n", nome);
+    fprintf(produtotxt, "%f\n", preco);
+    fclose(produtotxt);
+    return;
+    }
+    // Incrementa variável para caso retorne o loop
+    i++;
+    }while(resultado==1);
 }
 
 //Função apaga itens
