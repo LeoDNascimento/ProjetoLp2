@@ -24,18 +24,13 @@ typedef struct item {
 };
 typedef struct item item;
 
-typedef struct carrinho{
-  int quantidade;
-	struct item prodNoCarrinho;
-};
-
-FILE *produtotxt;
 FILE *produtos;
 FILE *notaFiscal;
+FILE *prods;
 
 //Loja
-void loja (struct item *prod, struct carrinho *carroAtual){
-	int nItens=0, utility, produtosNoCarrinho=0, quantidade;
+int loja (struct item *prod, struct item *carroAtual){
+	int nItens=0, utility=1, produtosNoCarrinho=0;
 	struct item lista[100];
 	item produto;
 	produtos = fopen("produtos.dat", "r+b");
@@ -49,48 +44,49 @@ void loja (struct item *prod, struct carrinho *carroAtual){
 					printf("\tID.......: %d\n", produto.ID);
 					printf("\tNome.....: %s\n", produto.nome);
 					printf("\tPreço....: %.2f\n\n", produto.presso);
-				  lista[nItens]=produto;
+				  lista[nItens].ID=produto.ID;
+					strcpy(lista[nItens].nome, produto.nome);
+					lista[nItens].presso=produto.presso;
 					nItens++;
 			}else{
 			// No fim do arquivo, encerra-se o loop
 			break;
 			}}
 //---------------------------------------------------------------------------
-do{
-	printf("\tInforme o ID do item que deseja adquirir e sua quantidade:\n\t0 0 se querer encerrar.\n");
-	scanf("%d %d", &utility, &quantidade);
-	if(utility<nItens){
-			carroAtual[produtosNoCarrinho].prodNoCarrinho.ID=lista[utility].ID;
-			//carroAtual[produtosNoCarrinho].prodNoCarrinho.nome=lista[utility].nome;
-			strcpy(lista[utility].nome, carroAtual[produtosNoCarrinho].prodNoCarrinho.nome);
-			carroAtual[produtosNoCarrinho].prodNoCarrinho.presso=lista[utility].presso;
-			carroAtual[produtosNoCarrinho].quantidade=quantidade;
+while (utility>=0){
+	printf("\tInforme o ID do item que deseja adquirir:\n\t0 se querer encerrar.\n");
+	scanf("%d", &utility);
+	if(utility<=0){
+		break;
 		}
-		else{	};
+		else{
+		strcpy(carroAtual[produtosNoCarrinho].nome, lista[utility-1].nome);
+    printf("Nome: %s\n", carroAtual[produtosNoCarrinho].nome);
+		carroAtual[produtosNoCarrinho].presso=lista[utility-1].presso;
+    printf("presso: %f\n", carroAtual[produtosNoCarrinho].presso);
+    produtosNoCarrinho++;
+		}
 	}
-while(utility>0);
-
-fclose(produtos);
-
-return;
+return produtosNoCarrinho;
 }
 
 //cria o arquivo que será a nota fiscal
-void notaf(struct carrinho *carroAtual){
-    int resultado, i, pressoaux[50], pressoTotal = 0;
-	item produto;
-    notaFiscal = fopen("nota.txt", "w");
-    for(i=0;i<50;i++){
-        pressoaux[i] = carroAtual[i].prodNoCarrinho.presso * carroAtual[i].quantidade;
-        if(carroAtual[i].prodNoCarrinho.presso!=0 && carroAtual[i].prodNoCarrinho.presso>-21474836){
-            fprintf(notaFiscal, "%s    ", carroAtual[i].prodNoCarrinho.nome);
-            fprintf(notaFiscal, "%f\n", pressoaux[i]);
-        }
-        pressoTotal += pressoaux[i];
-    }
-    fprintf(notaFiscal, "Preço total: %d", pressoTotal);
-    fclose(notaFiscal);
-    printf("\tEssa boffta foi gerada com sucesso\n");
+void notaf(struct item *prod, struct item *carroAtual, int nItem){
+  int resultado, i, pressoaux[50], pressoTotal = 0;
+  	item produto;
+      notaFiscal = fopen("nota.txt", "w");
+      fprintf(notaFiscal, "\t---------NOTA FISCAL---------\n");
+      for(i=0;i<nItem;i++){
+              fprintf(notaFiscal, "\t%s", carroAtual[i].nome);
+              fprintf(notaFiscal, "\t%2.f\n", carroAtual[i].presso);
+
+          pressoTotal += carroAtual[i].presso;
+      }
+      fprintf(notaFiscal, "\tPreço total: %d", pressoTotal);
+      fclose(notaFiscal);
+      printf("\tSua nota foi gerada com sucesso\n");
+      return;
+
     return;
 }
 //busca itens cadastrados
@@ -133,7 +129,7 @@ void cadastrarItem(){
     // Abrindo o arquivo
     item produto;
     produtos = fopen("produtos.dat", "a+b");
-    produtotxt = fopen("produtos.txt", "a+");
+		prods = fopen("prods.txt", "wf");
 
     // Método para cálculo automático de ID
     for(i=0;i<MAX_PROD;i++){
@@ -160,28 +156,16 @@ void cadastrarItem(){
     produto.ID = cont;
     produto.presso = preco;
     fwrite(&produto, sizeof(produto),1,produtos);
+		fprintf(prods, "ID: %d\n", cont);
+		fprintf(prods, "Nome: %s\n", nome);
+		fprintf(prods, "Preço: %2.f\n", preco);
+		fclose(prods);
     fclose(produtos);
-    break;
-    }
-    // Incrementa variável para caso retorne o loop
-    i++;
-    }while(resultado==1); // Loop dura enquanto houver conteúdo no arquivo
-
-        do{
-    // Verifica se há conteúdo naquele trecho do disco
-    resultado = fread(&produto, i*sizeof(produto),1,produtotxt);
-    // Se não houver, insere o conteúdo passado pelo usuario
-    if (resultado != 1 || produto.ID == 0){
-    fseek(produtotxt, 0, SEEK_SET);
-    fprintf(produtotxt, "%d\n", cont);
-    fprintf(produtotxt, "%s\n", nome);
-    fprintf(produtotxt, "%f\n", preco);
-    fclose(produtotxt);
     return;
     }
     // Incrementa variável para caso retorne o loop
     i++;
-    }while(resultado==1);
+    }while(resultado==1); // Loop dura enquanto houver conteúdo no arquivo
 }
 
 //Função apaga itens
@@ -241,10 +225,10 @@ void listar(){
 
 //função de menu principal
 //done
-void menu(struct item *prod, struct carrinho *carAtual){
+void menu(struct item *prod, struct item *carAtual){
     setlocale(LC_ALL, " ");
     //variavel de menu
-    int escolha, ans;
+    int escolha, ans, nitens;
 do{
     cls();
     printf("\t=====JAC JOIAS=====\n");
@@ -257,7 +241,9 @@ do{
     switch (escolha){
         //entrar na loja
         case 1:
-				loja(prod, carAtual);
+			//	loja(prod, carAtual);
+        nitens = loja(prod, carAtual);
+
         break;
 
         //buscar itens
@@ -272,7 +258,7 @@ do{
 
         //cria um arquivo que será a nota fiscal
         case 4:
-            notaf(carAtual);
+        notaf(prod, carAtual, nitens);
         break;
 
 				//mostra quais itens já tem cadastrados
@@ -305,7 +291,8 @@ int main(){
     //vetor dos produtos da loja
     struct item produtos[MAX_PROD];
     //vetor do carrinho do cliente
-    struct carrinho carAtual[50];
+    //struct carrinho carAtual[50];
+		struct item carAtual [50];
     menu(produtos, carAtual);
     return 0;
 }
